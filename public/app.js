@@ -7,7 +7,7 @@ async function OnClick() {
   const title = document.getElementById("input").value;
   const content = document.getElementById("textarea").value;
   if (content && title) {
-    await fetch("http://localhost:3000/newnote", {
+    await fetch("https://noteapp-ri4x.onrender.com/newnote", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ title, content }),
@@ -23,7 +23,7 @@ async function EditNote() {
   const title = document.getElementById("EditTitle").value;
   const content = document.getElementById("EditContent").value;
   if (content && title && id > 0) {
-    await fetch(`http://localhost:3000/notes/${id}`, {
+    await fetch(`https://noteapp-ri4x.onrender.com/notes/${id}`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ title, content }),
@@ -37,7 +37,7 @@ async function DeleteNote() {
   event.preventDefault();
   const id = document.getElementById("DeleteID").value;
   if (id > 0) {
-    await fetch(`http://localhost:3000/notes/${id}`, {
+    await fetch(`https://noteapp-ri4x.onrender.com/notes/${id}`, {
       method: "DELETE",
       headers: { "Content-Type": "application/json" },
     });
@@ -47,7 +47,7 @@ async function DeleteNote() {
 }
 
 async function Main() {
-  const response = await fetch("http://localhost:3000/notes");
+  const response = await fetch("https://noteapp-ri4x.onrender.com/notes");
   const data = await response.json();
   if (data && data.length > 0) {
     data.forEach((note) => {
