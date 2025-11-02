@@ -1,0 +1,24 @@
+<html>
+  <body>
+    <h1>Notes</h1>
+    <form>
+      <input type="text" id="input" required />
+      <textarea id="textarea" required></textarea>
+      <button type="submit" id="button" onclick="OnClick()">Add Note</button>
+    </form>
+    <form>
+      <input type="number" id="EditID" required />
+      <input type="text" id="EditTitle" required />
+      <textarea id="EditContent" required></textarea>
+      <button type="submit" id="button" onclick="EditNote()">Edit Note</button>
+    </form>
+    <form>
+      <input type="number" id="DeleteID" required />
+      <button type="submit" id="button" onclick="DeleteNote()">
+        Delete Note
+      </button>
+    </form>
+    <div id="Notes">Notes:</div>
+    <script src="app.js"></script>
+  </body>
+</html>
