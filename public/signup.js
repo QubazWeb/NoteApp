@@ -14,9 +14,9 @@ async function ValidateAndUpload() {
     console.error("error on line 14, something wrong with joi validation");
   } else {
     await fetch("https://noteapp-ri4x.onrender.com/signup", {
-        method: "POST",
-        headers: { "Content-Type": "application/json"},
-        body: JSON.stringify(value);
-    })
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(value),
+    });
   }
 }
