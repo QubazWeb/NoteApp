@@ -2,6 +2,7 @@ const username = document.getElementById("username");
 const password = document.getElementById("password");
 
 async function ValidateAndUpload() {
+  event.preventDefault();
   if (!username.value || !password.value) {
     console.error("Username and password required");
     return;
