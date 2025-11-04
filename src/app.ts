@@ -18,6 +18,10 @@ app.use((req:any , res:any, next:any) => {
   next();
 });
 
+app.get("/", (req:any, res:any) => {
+  res.sendFile(path.join(__dirname, 'public', 'index.html'));
+})
+
 app.get("/notes", async (req: any, res: any) => {
     const tasks = await prisma.Note.findMany();
     res.json(tasks);
