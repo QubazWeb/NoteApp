@@ -1,5 +1,7 @@
 const express = require("express");
 const cors = require("cors");
+const bcrypt = require("bcrypt");
+const joi = require("joi");
 const { PrismaClient } = require("@prisma/client");
 
 const app = express();
@@ -93,3 +95,37 @@ const PORT = 3000;
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
 });
+
+app.get("/signup", (req:any, res:any) => {
+  res.sendFile(__dirname + '/public/signup.html');
+  res.sendFile(__dirname + '/public/signup.js');
+
+})
+
+app.post("/signup", async (req:any, res:any) => {
+  try {
+    const JoiObject = joi.object({
+      username: joi.string().required(),
+      password: joi.string().min(8).required(),
+    });
+
+    const {value, error} = JoiObject.validate({username:req.body.username, password:req.body.password});
+
+    if (error) {
+      res.send("there was an error with validation");
+      return;
+    } else {      
+      const UserExists = await prisma.User.findUnique({where: {username:req.body.username}})
+      if (UserExists) {
+      res.send("Failed to create user, already exists :(");
+      return;
+      }
+      const encrypted_password = await bcrypt.hash(req.body.password, 10);
+      await prisma.User.create({data: {username: value.username, password: encrypted_password}})
+      res.send("User created! " + value.username);
+      return;
+    }
+  } catch {
+    res.send("posting to /signup errored")
+  }
+})
