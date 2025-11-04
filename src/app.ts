@@ -2,6 +2,7 @@ const express = require("express");
 const cors = require("cors");
 const bcrypt = require("bcrypt");
 const joi = require("joi");
+import path from 'path';
 const { PrismaClient } = require("@prisma/client");
 
 const app = express();
@@ -10,7 +11,12 @@ const prisma = new PrismaClient();
 app.use(cors());
 app.use(express.json());
 app.use(express.static("public"));
-
+app.use((req:any , res:any, next:any) => {
+  if (req.url.endsWith('.js')) {
+    res.type('application/javascript');
+  }
+  next();
+});
 
 app.get("/notes", async (req: any, res: any) => {
     const tasks = await prisma.Note.findMany();
@@ -91,15 +97,8 @@ app.delete("/notes/:id", async (req:any, res:any) => {
     }
 });
 
-const PORT = 3000;
-app.listen(PORT, () => {
-  console.log(`Server running on http://localhost:${PORT}`);
-});
-
 app.get("/signup", (req:any, res:any) => {
   res.sendFile(__dirname + '/public/signup.html');
-  res.sendFile(__dirname + '/public/signup.js');
-
 })
 
 app.post("/signup", async (req:any, res:any) => {
@@ -125,7 +124,12 @@ app.post("/signup", async (req:any, res:any) => {
       res.send("User created! " + value.username);
       return;
     }
-  } catch {
-    res.send("posting to /signup errored")
+  } catch (error) {
+    res.send(error);
   }
 })
+
+const PORT = 3000;
+app.listen(PORT, () => {
+  console.log(`Server running on http://localhost:${PORT}`);
+});
