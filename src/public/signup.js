@@ -16,4 +16,6 @@ async function ValidateAndUpload() {
       password: password.value,
     }),
   });
+  username.innerText = "";
+  password.innerText = "";
 }
