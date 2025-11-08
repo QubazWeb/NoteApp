@@ -34,8 +34,6 @@ app.get("/notes", isAuthenticated, async (req: any, res: any) => {
     res.json(tasks);
 });
 
-app.get("/notes/:id", isAuthenticated, async (req:any, res:any) => {
-    // app.ts - Your /newnote route
 app.post("/newnote", async (req: any, res: any) => {
   const { title, content } = req.body;
 
@@ -55,7 +53,6 @@ app.post("/newnote", async (req: any, res: any) => {
     console.error("Prisma Create Error:", error);
     res.status(500).json({ error: "Failed to create note due to server error." });
   }
-});
 });
 
 app.post("/newnote", isAuthenticated, async (req:any,res:any) => {
