@@ -1,6 +1,7 @@
 <html>
   <body>
     <h1>Notes</h1>
+    <button type="submit" id="logout" onclick="LogOut()">Log Out</button>
     <form>
       <input type="text" id="input" required />
       <textarea id="textarea" required></textarea>
@@ -84,6 +85,9 @@
             Notes.append(h4);
           });
         }
+      }
+      async function LogOut() {
+        await fetch("https://noteapp-ri4x.onrender.com/logout");
       }
 
       Main();

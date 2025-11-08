@@ -182,6 +182,15 @@ app.post("/login", isNotAuthenticated, async (req:any, res:any) => {
     res.status(500).send("error with database");
   }
 })
+app.get("/logout", (req: any, res: any) => {
+  req.session.destroy((err: any) => {
+    if (err) {
+      res.send("Error logging out");
+    } else {
+      res.send("Logged out successfully");
+    }
+  });
+});
 
 function isAuthenticated(req: any, res: any, next: any) {
   if (req.session.userId) {
