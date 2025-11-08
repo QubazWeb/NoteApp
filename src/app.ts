@@ -136,7 +136,43 @@ app.post("/signup", async (req:any, res:any) => {
     console.error("Database Error: " + error)
     res.status(500).send("error with database");
   }
+});
+
+app.get("/login", (req:any, res:any) => {
+  res.sendFile(__dirname + '/public/login.html');
+});
+
+app.post("/login", async (req:any, res:any) => {
+  try {
+    const JoiObject = joi.object().keys({
+      username: joi.string().required(),
+      password: joi.string().min(8).required(),
+    });
+
+    const { error, value } = JoiObject.validate({
+      username: req.body.username,
+      password: req.body.password
+    });
+
+    if (error) {
+      res.status(400).send("there was an error with validation");
+      return;
+    }
+
+    const UserExists = await prisma.User.findUnique({where: {username:value.username}})
+    const PasswordMatches = bcrypt.compare(UserExists.password, value.password);
+
+    if (UserExists && PasswordMatches) {
+    // do logic 
+    res.status(200).send("succesfully logged in")
+    }
+    res.send("Unexpected error has occured");
+  } catch (error) {
+    console.error("Database Error: " + error)
+    res.status(500).send("error with database");
+  }
 })
+
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
