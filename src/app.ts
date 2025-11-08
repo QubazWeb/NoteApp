@@ -106,11 +106,11 @@ app.delete("/notes/:id", isAuthenticated, async (req:any, res:any) => {
     }
 });
 
-app.get("/signup", (req:any, res:any) => {
+app.get("/signup", isNotAuthenticated, (req:any, res:any) => {
   res.sendFile(__dirname + '/public/signup.html');
 })
 
-app.post("/signup", async (req:any, res:any) => {
+app.post("/signup", isNotAuthenticated, async (req:any, res:any) => {
   try {
     const JoiObject = joi.object().keys({
       username: joi.string().required(),
@@ -145,11 +145,11 @@ app.post("/signup", async (req:any, res:any) => {
   }
 });
 
-app.get("/login", (req:any, res:any) => {
+app.get("/login", isNotAuthenticated, (req:any, res:any) => {
   res.sendFile(__dirname + '/public/login.html');
 });
 
-app.post("/login", async (req:any, res:any) => {
+app.post("/login", isNotAuthenticated, async (req:any, res:any) => {
   try {
     const JoiObject = joi.object().keys({
       username: joi.string().required(),
@@ -188,6 +188,13 @@ function isAuthenticated(req: any, res: any, next: any) {
     next();
   } else {
     res.status(401).send("Not authenticated");
+  }
+}
+function isNotAuthenticated(req: any, res: any, next: any) {
+  if (!req.session.userId) {
+    next();
+  } else {
+    res.status(401).send("Can't access that, log out first");
   }
 }
 
