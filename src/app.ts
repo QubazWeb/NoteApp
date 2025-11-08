@@ -164,7 +164,8 @@ app.post("/login", async (req:any, res:any) => {
 
     if (UserExists && PasswordMatches) {
     // do logic 
-    res.status(200).send("succesfully logged in")
+    res.status(200).send("succesfully logged in");
+    return;
     }
     res.status(401).send("Password or username is incorrect");
   } catch (error) {
