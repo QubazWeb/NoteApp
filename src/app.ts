@@ -45,9 +45,7 @@ app.post("/newnote", async (req: any, res: any) => {
     });
     res.status(201).json(note);
   } catch (error) {
-    // 🚨 CATCH THE ERROR HERE 🚨
     console.error("Prisma Create Error:", error);
-    // Send a safe 500 error response instead of crashing the server
     res.status(500).json({ error: "Failed to create note due to server error." });
   }
 });
