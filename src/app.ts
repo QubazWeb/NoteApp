@@ -2,8 +2,9 @@ const express = require("express");
 const cors = require("cors");
 const bcrypt = require("bcrypt");
 const joi = require("joi");
-import path from 'path';
+const path = require('path');
 const { PrismaClient } = require("@prisma/client");
+const session = require("express-session");
 
 const app = express();
 const prisma = new PrismaClient();
@@ -17,17 +18,23 @@ app.use((req:any , res:any, next:any) => {
   }
   next();
 });
+app.use(session({
+  secret: process.env.SECRET_STRING,
+  resave: false,
+  saveUninitialized: false,
+  cookie: { secure: false }
+}));
 
-app.get("/", (req:any, res:any) => {
+app.get("/", isAuthenticated, (req:any, res:any) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
 })
 
-app.get("/notes", async (req: any, res: any) => {
+app.get("/notes", isAuthenticated, async (req: any, res: any) => {
     const tasks = await prisma.Note.findMany();
     res.json(tasks);
 });
 
-app.get("/notes/:id", async (req:any, res:any) => {
+app.get("/notes/:id", isAuthenticated, async (req:any, res:any) => {
     // app.ts - Your /newnote route
 app.post("/newnote", async (req: any, res: any) => {
   const { title, content } = req.body;
@@ -51,7 +58,7 @@ app.post("/newnote", async (req: any, res: any) => {
 });
 });
 
-app.post("/newnote", async (req:any,res:any) => {
+app.post("/newnote", isAuthenticated, async (req:any,res:any) => {
     const {title, content} = req.body;
 
     if (!title || !content) {
@@ -69,7 +76,7 @@ app.post("/newnote", async (req:any,res:any) => {
     res.status(201).json(note);
 });
 
-app.put("/notes/:id", async (req:any, res:any) => {
+app.put("/notes/:id", isAuthenticated, async (req:any, res:any) => {
     const id = parseInt(req.params.id, 10);
     try {
         const { title, content } = req.body;
@@ -87,7 +94,7 @@ app.put("/notes/:id", async (req:any, res:any) => {
     }
 });
 
-app.delete("/notes/:id", async (req:any, res:any) => {
+app.delete("/notes/:id", isAuthenticated, async (req:any, res:any) => {
     const id = parseInt(req.params.id, 10);
     try {
         await prisma.Note.delete({
@@ -162,7 +169,7 @@ app.post("/login", async (req:any, res:any) => {
     const UserExists = await prisma.User.findUnique({where: {username:value.username}})
     bcrypt.compare(value.password, UserExists.password, function(err:any,result:any) {
         if (UserExists && result) {
-            // do logic 
+            req.session.userId = UserExists.id;
             res.status(200).send("succesfully logged in");
             return;
         }
@@ -176,6 +183,13 @@ app.post("/login", async (req:any, res:any) => {
   }
 })
 
+function isAuthenticated(req: any, res: any, next: any) {
+  if (req.session.userId) {
+    next();
+  } else {
+    res.status(401).send("Not authenticated");
+  }
+}
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
