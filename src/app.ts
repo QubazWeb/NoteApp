@@ -160,14 +160,16 @@ app.post("/login", async (req:any, res:any) => {
     }
 
     const UserExists = await prisma.User.findUnique({where: {username:value.username}})
-    const PasswordMatches = bcrypt.compare(UserExists.password, value.password);
-
-    if (UserExists && PasswordMatches) {
-    // do logic 
-    res.status(200).send("succesfully logged in");
-    return;
-    }
-    res.status(401).send("Password or username is incorrect");
+    bcrypt.compare(value.password, UserExists.password, function(err:any,result:any) {
+        if (UserExists && result) {
+            // do logic 
+            res.status(200).send("succesfully logged in");
+            return;
+        }
+        else {
+            res.status(401).send("Password or username is incorrect");
+        }
+    });
   } catch (error) {
     console.error("Database Error: " + error)
     res.status(500).send("error with database");
