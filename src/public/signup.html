@@ -18,7 +18,7 @@
           return;
         }
 
-        await fetch("https://noteapp-ri4x.onrender.com/signup", {
+        const res = await fetch("https://noteapp-ri4x.onrender.com/signup", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
@@ -26,6 +26,7 @@
             password: password.value,
           }),
         });
+        console.log(res);
       }
     </script>
   </body>

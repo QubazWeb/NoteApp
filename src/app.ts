@@ -107,27 +107,33 @@ app.get("/signup", (req:any, res:any) => {
 
 app.post("/signup", async (req:any, res:any) => {
   try {
-    const JoiObject = joi.object({
+    const JoiObject = joi.object().keys({
       username: joi.string().required(),
       password: joi.string().min(8).required(),
     });
 
-    const {value, error} = JoiObject.validate({username:req.body.username, password:req.body.password});
+    const { error, value } = JoiObject.validate({
+      username: req.body.username,
+      password: req.body.password
+    });
 
     if (error) {
       res.send("there was an error with validation");
       return;
-    } else {      
-      const UserExists = await prisma.User.findUnique({where: {username:req.body.username}})
-      if (UserExists) {
-      res.send("Failed to create user, already exists :(");
-      return;
-      }
-      const encrypted_password = await bcrypt.hash(req.body.password, 10);
-      await prisma.User.create({data: {username: value.username, password: encrypted_password}})
-      res.send("User created! " + value.username);
-      return;
     }
+
+    const UserExists = await prisma.User.findUnique({where: {username:value.username}})
+
+    if (UserExists) {
+    res.send("Failed to create user, already exists :(");
+    return;
+    }
+
+    const encrypted_password = await bcrypt.hash(value.password, 10);
+    await prisma.User.create({data: {username: value.username, password: encrypted_password}})
+    res.send("User created! " + value.username);
+    return;
+
   } catch (error) {
     res.send(error);
   }
