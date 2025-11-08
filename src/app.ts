@@ -135,6 +135,7 @@ app.post("/signup", async (req:any, res:any) => {
     return;
 
   } catch (error) {
+    console.error("Database Error: " + error)
     res.status(500).send("error with database");
   }
 })
