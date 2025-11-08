@@ -118,24 +118,24 @@ app.post("/signup", async (req:any, res:any) => {
     });
 
     if (error) {
-      res.send("there was an error with validation");
+      res.status(400).send("there was an error with validation");
       return;
     }
 
     const UserExists = await prisma.User.findUnique({where: {username:value.username}})
 
     if (UserExists) {
-    res.send("Failed to create user, already exists :(");
+    res.status(409).send("Failed to create user, already exists :(");
     return;
     }
 
     const encrypted_password = await bcrypt.hash(value.password, 10);
     await prisma.User.create({data: {username: value.username, password: encrypted_password}})
-    res.send("User created! " + value.username);
+    res.status(201).send("User created! " + value.username);
     return;
 
   } catch (error) {
-    res.send(error);
+    res.status(500).send("error with database");
   }
 })
 
